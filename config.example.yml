@@ -1,0 +1,55 @@
+# youtube-ingest-skill configuration
+# Copy this file to config.yml and customize.
+
+# Root of your Obsidian vault (or any markdown KG root)
+VAULT_PATH: ~/Documents/MyVault
+
+# Directory for persistent agent memory files (outside the vault)
+# These are slug-shaped files (feedback_*.md, project_*.md, reference_*.md)
+# referenced from notes by relative path, NOT by [[wikilink]].
+MEMORY_DIR: ~/.claude/memory
+
+# Path to the transcript tool. The script in this repo is generic.
+# Replace if you have a custom pipeline (faster-whisper, deepgram, etc.).
+TRANSCRIPT_TOOL: ./scripts/transcript.sh
+
+# Where transcripts land (txt + srt + meta.json per video)
+TRANSCRIPT_OUT: ~/Desktop/transcripts/
+
+# Container folders inside the vault
+KNOWLEDGE_CONTAINER: Knowledge Library
+PERSONS_CONTAINER: Persons
+REFERENCE_CONTAINER: Reference
+
+# Path to your whisper binary.
+# On Apple Silicon: install mlx_whisper in a venv.
+# Generic: install faster-whisper or whisper.cpp and adapt scripts/transcript.sh.
+WHISPER_BIN: ~/.venv/bin/mlx_whisper
+
+# Whisper model. Larger = slower + more accurate.
+# Options: tiny, base, small, medium, large-v3, large-v3-turbo
+WHISPER_MODEL: large-v3-turbo
+
+# Language for whisper. 'auto' = detect from audio (recommended).
+# Override with language code only if auto-detect fails.
+WHISPER_LANG: auto
+
+# Debug log path. Useful when transcript fetch fails transiently.
+DEBUG_LOG: /tmp/yt_transcript_debug.log
+
+# Audio cache. Set to a persistent path (not /tmp) if you want to keep
+# audio between runs for re-transcription with different models.
+AUDIO_CACHE: ~/.cache/yt_transcript/
+
+# Backlink quality gate
+BACKLINK_MIN: 3
+BACKLINK_MAX: 7
+BACKLINK_MIN_SYNAPSE: 2
+
+# Whether to run the deep garden walk (Step 6). Default: true.
+# Set to false only if you want a shallow ingest for testing.
+DEEP_GARDEN_WALK: true
+
+# Whether to verify post-write (Step 7). Default: true.
+# Disabling this is strongly discouraged. Syntactic success != functional success.
+VERIFY_POST_WRITE: true

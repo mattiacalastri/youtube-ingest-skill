@@ -1,0 +1,39 @@
+# Local config (each user has their own paths)
+config.yml
+
+# Transcript outputs (large, user-specific)
+*.txt
+*.srt
+*.vtt
+*.meta.json
+
+# Audio cache
+.cache/
+audio_cache/
+
+# Debug logs
+*.log
+/tmp/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (if anyone adds a JS adapter)
+node_modules/
+
+# Keep examples and templates
+!examples/*.md
