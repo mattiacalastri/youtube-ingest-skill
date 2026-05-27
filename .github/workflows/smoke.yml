@@ -1,0 +1,86 @@
+name: Smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    name: Syntax checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shell syntax (transcript.sh)
+        run: bash -n scripts/transcript.sh
+
+      - name: Shell syntax (brain-training-digest.sh)
+        run: bash -n scripts/brain-training-digest.sh
+
+      - name: YAML lint (config.example.yml)
+        run: |
+          python3 -c "import yaml; yaml.safe_load(open('config.example.yml'))"
+
+      - name: YAML lint (workflows + issue templates)
+        run: |
+          for f in .github/workflows/*.yml .github/ISSUE_TEMPLATE/config.yml; do
+            python3 -c "import sys, yaml; yaml.safe_load(open('$f'))"
+          done
+
+      - name: Markdown frontmatter sanity (SKILL.md has required keys)
+        run: |
+          python3 - <<'PYEOF'
+          import re, sys
+          content = open('SKILL.md').read()
+          m = re.match(r'^---\n(.*?)\n---\n', content, re.DOTALL)
+          if not m:
+              print('SKILL.md missing frontmatter'); sys.exit(1)
+          fm = m.group(1)
+          for key in ('name:', 'description:', 'trigger:'):
+              if key not in fm:
+                  print(f'SKILL.md frontmatter missing {key}'); sys.exit(1)
+          print('SKILL.md frontmatter OK')
+          PYEOF
+
+  privacy:
+    name: Privacy scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan for private identifiers
+        run: |
+          # The repo must not contain private identifiers from the original workflow.
+          # If you fork, edit this list with your own anti-leak terms.
+          PATTERNS='polpo|aurahome|kongline|forgiatore'
+          if grep -rEi "$PATTERNS" . --exclude-dir=.git --exclude=LICENSE --exclude-dir=.github 2>/dev/null; then
+            echo "Private identifier leak detected. Sanitize before merge."
+            exit 1
+          fi
+          echo "Privacy scan clean"
+
+      - name: Scan for secrets
+        run: |
+          if grep -rE "(sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{20,}|xoxp-[0-9]{10,})" . --exclude-dir=.git 2>/dev/null; then
+            echo "Possible secret detected"
+            exit 1
+          fi
+          echo "Secret scan clean"
+
+  dependencies:
+    name: Dependency availability check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check yt-dlp installability
+        run: |
+          pip install --quiet yt-dlp
+          yt-dlp --version
+
+      - name: Check faster-whisper installability (alt to mlx_whisper)
+        run: |
+          pip install --quiet faster-whisper
+          python3 -c "import faster_whisper; print(faster_whisper.__version__)"
