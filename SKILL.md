@@ -27,12 +27,20 @@ trigger:
 ## Flags
 
 ```
-/youtube-ingest <url>                pipeline default
-/youtube-ingest <url> --no-vault     stop at reasoning, no write
-/youtube-ingest <url> --container X  force container (knowledge|persons|reference)
-/youtube-ingest <url> --lang it|en   force whisper language
-/youtube-ingest --from-transcript P  skip steps 1-3, start from existing transcript file
+/youtube-ingest <url>                       pipeline default (standard mode)
+/youtube-ingest <url> --mode brain-training enable brain-training mode (see below)
+/youtube-ingest <url> --no-vault            stop at reasoning, no write
+/youtube-ingest <url> --container X         force container (knowledge|persons|reference)
+/youtube-ingest <url> --lang it|en          force whisper language
+/youtube-ingest --from-transcript P         skip steps 1-3, start from existing transcript file
+/youtube-ingest --review                    surface neurons due for spaced-repetition review
+/youtube-ingest --quiz <neuron>             regenerate active-recall Q&A for an existing neuron
 ```
+
+## Modes
+
+- **standard** (default) - 7-step pipeline, one neuron per video, no review schedule.
+- **brain-training** - 7 steps + 6 additional sub-steps for active learning, convergence/tension detection, spaced repetition, and a weekly digest. See [BRAIN_TRAINING.md](./BRAIN_TRAINING.md) for full details.
 
 ## Configuration
 
@@ -389,6 +397,44 @@ The pipeline above embeds discoveries from a long run of ingest cycles. The prin
 19. **Inline fact-check beats unverified flag** - when a claim is verifiable in ~5 seconds, do it now. `[unverified]` is permanent narrative debt. See Step 4.6.
 
 Each of these anti-patterns was discovered the hard way. The pipeline absorbs them. If you fork, do not drop the absorption mechanism.
+
+## Brain-training mode sub-steps
+
+When `--mode brain-training` is active, six additional sub-steps run in addition to the standard pipeline. Full specification in [BRAIN_TRAINING.md](./BRAIN_TRAINING.md). Summary:
+
+### Step 0.5 - Speaker network check (after Step 0)
+
+Check how many prior neurons exist for this speaker.
+
+- 0 prior -> tag `network: prospect`, note "first ingest, evaluate signal."
+- 1-2 prior -> tag `network: emerging`, add explicit synapses to prior neurons by same speaker.
+- 3+ prior -> tag `network: core`, ensure `Persons/<Speaker>.md` exists with `## Knowledge Library` index.
+
+### Step 4.2.5 - Convergence detection (during vault scan)
+
+For each extracted concept, scan for the same pattern asserted by 2+ different prior speakers. If found, body gains a `## Convergence` section with weight (`HIGH | MEDIUM | EMERGING`) and synapse links.
+
+### Step 4.5.5 - Tension detection (during tension extraction)
+
+Scan prior neurons for claims that contradict claims in the current video. If found, body gains a `## Cross-video tension` section with possible resolutions and links to the contradicted notes. Tag `tension: open`.
+
+### Step 5.5 - Active recall generation (after Step 5)
+
+Generate 3-5 active-recall questions targeting: thesis, operational pattern, tension, verified fact, cross-graph synthesis. Write to `$VAULT_PATH/Q&A/<date> - <Speaker> - <Topic>.md` with frontmatter (`source`, `next_review`, `ease`).
+
+See `examples/quiz-example.md` for canonical structure.
+
+### Step 5.6 - Spaced repetition scheduling
+
+Set `next_review` in the Q&A frontmatter using an SM-2-inspired schedule (1d, 3d, 7d, 21d, 60d, 180d). The `--review` flag surfaces neurons due today.
+
+### Step 6.5 - Cluster growth report (after Step 6)
+
+Report cluster the new neuron joined: neuron count before/after, last ingest in cluster, unique speaker count, open tensions. Tag clusters with >60 days since last ingest as `cluster: stagnant`. Surface in the weekly digest.
+
+### Weekly digest
+
+Run `scripts/brain-training-digest.sh` weekly. Produces a markdown digest covering reviews due, convergences detected, unresolved tensions, stagnant clusters, top speakers, network gaps, and active-recall completion rate.
 
 ## Sister skills (out of scope here)
 

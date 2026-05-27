@@ -53,3 +53,58 @@ DEEP_GARDEN_WALK: true
 # Whether to verify post-write (Step 7). Default: true.
 # Disabling this is strongly discouraged. Syntactic success != functional success.
 VERIFY_POST_WRITE: true
+
+# ----------------------------------------------------------------
+# Mode selection
+# ----------------------------------------------------------------
+# Default mode for /youtube-ingest.
+# Options:
+#   standard       7-step pipeline, one neuron per video, no review schedule.
+#   brain-training 7 steps + 6 sub-steps for active learning (see BRAIN_TRAINING.md).
+MODE: standard
+
+# ----------------------------------------------------------------
+# Brain-training mode settings (only used when MODE: brain-training)
+# ----------------------------------------------------------------
+
+# Folder for active-recall files (created if missing).
+QA_CONTAINER: "Q&A"
+
+# Folder for unresolved cross-video tensions.
+TENSIONS_CONTAINER: Tensions
+
+# Folder for cluster MOC notes.
+CLUSTERS_CONTAINER: Clusters
+
+# Number of active-recall questions per neuron.
+# Recommended: 5. Below 3, retention degrades. Above 7, you will skip them.
+ACTIVE_RECALL_QUESTIONS: 5
+
+# Spaced-repetition interval schedule (days).
+# SM-2 inspired. Skipped reviews reset to the first interval.
+SR_INTERVALS: [1, 3, 7, 21, 60, 180]
+
+# Initial ease factor. Decreases on failed recall (* 0.85), increases on smooth (* 1.1, capped 3.0).
+SR_EASE_INITIAL: 2.5
+
+# Convergence detection threshold.
+# Number of independent speakers required to flag a pattern as convergent.
+CONVERGENCE_THRESHOLD: 2
+
+# Cluster stagnation threshold (days). Beyond this, surface in weekly digest.
+CLUSTER_STAGNATION_DAYS: 60
+
+# Speaker network promotion thresholds.
+# 0 prior   -> network: prospect
+# 1-2 prior -> network: emerging
+# 3+ prior  -> network: core
+NETWORK_EMERGING_MIN: 1
+NETWORK_CORE_MIN: 3
+
+# Whether to enforce active recall in brain-training mode.
+# Disabling defeats the purpose of the mode. Strongly discouraged.
+ACTIVE_RECALL_REQUIRED: true
+
+# Target weekly digest day (informational, not enforced by the script).
+# The digest runs whenever you invoke scripts/brain-training-digest.sh.
+DIGEST_DAY: sunday

@@ -45,6 +45,21 @@ that absorbed ~200 ingest cycles. Pipeline structure mirrors the canonical
 - **Whisper is a leaf dependency**: swap it freely (faster-whisper, deepgram,
   groq, etc.) by editing `scripts/transcript.sh`.
 
+### Brain-training mode
+
+Optional `--mode brain-training` adds six sub-steps for deliberate learning:
+
+- Speaker network check (prospect / emerging / core tiers)
+- Convergence detection (same pattern asserted by 2+ independent speakers)
+- Cross-video tension detection (claims contradicting prior neurons)
+- Active recall generation (3-5 Q&A files per neuron with hidden answers)
+- Spaced repetition scheduling (SM-2-inspired, 1d/3d/7d/21d/60d/180d)
+- Cluster growth report + stagnant cluster surfacing
+
+Includes `scripts/brain-training-digest.sh` for the weekly review digest covering due reviews, convergences, unresolved tensions, stagnant clusters, top speakers, network concentration gaps, and active-recall completion rate.
+
+Full guide in `BRAIN_TRAINING.md`. Example Q&A structure in `examples/quiz-example.md`.
+
 ### Out of scope
 
 - Bulk ingest (this is a top-down skill - one video at a time).

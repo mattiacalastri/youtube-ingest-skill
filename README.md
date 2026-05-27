@@ -4,6 +4,21 @@
 
 A Claude Code / Claude Agent SDK skill that ingests YouTube videos as **structured, vault-anchored notes** in Obsidian (or any markdown knowledge graph). The skill is opinionated: it values **reasoning over summarization** and **graph-anchored synthesis over isolated transcripts**.
 
+## Two modes: research notebook or active brain training
+
+The skill ships with two modes:
+
+- **standard** - one neuron per video, no review schedule. Good for a research notebook or sporadic ingest.
+- **brain-training** - adds speaker network tracking, convergence/tension detection, active-recall question generation, spaced-repetition scheduling, and a weekly digest. Good for **deliberate learning** when you want each video to leave a lasting trace.
+
+Pick brain-training mode if you watch a lot of long-form content and the vault keeps filling up with notes you never re-read. See [BRAIN_TRAINING.md](./BRAIN_TRAINING.md).
+
+```
+/youtube-ingest <url>                          # standard
+/youtube-ingest <url> --mode brain-training    # active learning system
+/youtube-ingest --review                       # surface neurons due for review
+```
+
 ## What makes this different from `/yt-summarize` skills
 
 Most YouTube-to-markdown skills do this:
