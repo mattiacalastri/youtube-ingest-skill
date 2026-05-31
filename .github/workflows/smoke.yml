@@ -53,8 +53,9 @@ jobs:
       - name: Scan for private identifiers
         run: |
           # The repo must not contain private identifiers from the original workflow.
-          # If you fork, edit this list with your own anti-leak terms.
-          PATTERNS='polpo|aurahome|kongline|forgiatore'
+          # Keep only generic/public brand terms here — never list confidential client
+          # codenames in this public file. If you fork, edit this list with your own terms.
+          PATTERNS='polpo|aurahome'
           if grep -rEi "$PATTERNS" . --exclude-dir=.git --exclude=LICENSE --exclude-dir=.github 2>/dev/null; then
             echo "Private identifier leak detected. Sanitize before merge."
             exit 1
