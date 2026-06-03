@@ -1,6 +1,21 @@
-# youtube-ingest-skill
+<div align="center">
 
-> From a YouTube URL to a connected neuron in your knowledge graph.
+# 🐙 youtube-ingest-skill
+
+### *From a YouTube URL to a connected neuron in your knowledge graph.*
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Built for Claude Code](https://img.shields.io/badge/Built%20for-Claude%20Code-7c3aed)](https://docs.anthropic.com/en/docs/claude-code)
+[![Or Claude Agent SDK](https://img.shields.io/badge/or-Agent%20SDK-00d4aa)](https://docs.anthropic.com/en/api/agent-sdk)
+[![Vault: Obsidian](https://img.shields.io/badge/Vault-Obsidian-7c3aed)](https://obsidian.md)
+
+![Hero — the octopus turns a YouTube video into a constellation of linked neurons](./assets/hero.jpg)
+
+[Two Modes](#two-modes-research-notebook-or-active-brain-training) · [Why It's Different](#what-makes-this-different-from-yt-summarize-skills) · [Install](#install) · [Pipeline](#pipeline) · [Philosophy](#philosophy) · [License](#license)
+
+</div>
+
+---
 
 A Claude Code / Claude Agent SDK skill that ingests YouTube videos as **structured, vault-anchored notes** in Obsidian (or any markdown knowledge graph). The skill is opinionated: it values **reasoning over summarization** and **graph-anchored synthesis over isolated transcripts**.
 
