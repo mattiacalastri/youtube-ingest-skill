@@ -26,6 +26,7 @@ jobs:
       - name: YAML lint (workflows + issue templates)
         run: |
           for f in .github/workflows/*.yml .github/ISSUE_TEMPLATE/config.yml; do
+            [ -f "$f" ] || continue   # config.yml is an optional GitHub chooser file; skip if absent
             python3 -c "import sys, yaml; yaml.safe_load(open('$f'))"
           done
 
